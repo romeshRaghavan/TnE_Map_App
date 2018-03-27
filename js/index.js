@@ -3249,8 +3249,8 @@ function populateMainPage(){
 function showPosition(position) {
 	var lat = document.getElementById("lat");
 	var long = document.getElementById("long");
-	lat.value= position.coords.latitude ;
- 	long.value = position.coords.longitude;
+	lat.innerHTML= "Latitude : "+position.coords.latitude ;
+ 	long.innerHTML = "Longitude :  "+position.coords.longitude;
 	let address = locationDetails(position.coords.latitude,position.coords.longitude);
 }
 
@@ -3306,15 +3306,30 @@ function getEmplGPSDetails(){
         ['Kalambhai, Thane', 19.569633,72.99],
         ['Kohio Fort, Thane', 19.669633,73.00]
     ];
-        
+     var flightPlanCoordinates = [
+          {lat: 19.103783699999997, lng: 72.89288850000003},
+          {lat:  19.499633, lng:72.88},
+          {lat: 19.569633, lng:72.99},
+          {lat: 19.669633, lng: 73.00}
+        ];
+    
    
+ 	var flightPath = new google.maps.Polyline({
+          path: flightPlanCoordinates,
+          geodesic: true,
+          strokeColor: '#FF0000',
+          strokeOpacity: 1.0,
+          strokeWeight: 2
+        });
+
+        flightPath.setMap(map);
 
 
     //var image = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
     // Loop through our array of markers & place each one on the map  
     for( i = 0; i < markers.length; i++ ) {
     	var lbl =  String.fromCharCode(labels);
-   console.log("lbl  "+lbl)
+  		 console.log("lbl  "+lbl)
     	 // Display multiple markers on a map
      var infowindow = new google.maps.InfoWindow({
           content: markers[i][0],

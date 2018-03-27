@@ -758,3 +758,4 @@ div.image {
     margin-left: 26%;
 	margin-right: 30px;
 }
+div[id^=map_canvas], div[id^=map_canvas] {overflow: auto !important; position: static !important;}

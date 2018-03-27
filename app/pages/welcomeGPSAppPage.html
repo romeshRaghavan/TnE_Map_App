@@ -1,0 +1,76 @@
+ 
+<br>
+<div class="modal-body clearfix" style="padding:20px;background-color: white; height: 550Px;" >
+          <div class="form-inline row">
+            <h1>GPS App Welcome Page</h1>
+              <ul id="gpsInputId">
+                <li id="dateLi">
+                  <div role="main" class="ui-content">
+                    <label >  Date For Search: </label>
+                    <input id="gpsDate" type="text" class="form-control" placeholder="Date" readonly="readonly">
+                  </div>
+			           	</li>
+			           	<br>
+                <li id="emplLi">
+                 <label > Employee Name: </label>
+                  <input id="employeeDetail" type="hidden" style="width: 50%">
+                </li>
+                <br><br>
+                <li style="text-align: center;">
+                 <button type="button" style="width: 200px;" id="getLocationBtn" class="btn btn-info" onclick="getLocation();">I'm Here</button>
+                </li>
+                <li style="text-align: center;">
+                 <button type="button" style="width: 200px;" id="getGPSAdminBtn" class="btn btn-info" onclick="getEmplGPSDetails();">Get Employee  GPS Details</button>
+                </li>
+                <br>
+                <li id="latId">
+                	 <label for="lat">Latitude:</label> 
+                	 <input type="text" class="form-control" id="lat">
+                </li>
+                <br>
+                <li id="lngId">
+                	 <label for="long">Longitude:</label> 
+                	 <input type="text" class="form-control"  id="long">
+                </li>
+                <br>
+                <p id="formatted_address"> </p>
+            </ul>
+            <div id="map_wrapper">
+       			 <div id="map_canvas" class="mapping"></div>
+   			 </div>
+        </div>
+      </div>	
+</div>
+
+<script type="text/javascript">
+var currentMonth;
+var currentDate;
+var currentYear;	
+$(function() { 
+	var date = new Date();
+	 currentMonth = date.getMonth();
+	 currentDate = date.getDate();
+	 currentYear = date.getFullYear();
+	$('#gpsDate').datepicker({
+	maxDate: new Date(currentYear, currentMonth, currentDate)
+	});
+
+ var UserName =  window.localStorage.getItem("UserName");
+ console.log(UserName)
+ if(UserName == 'support@gps.in'){
+  document.getElementById('getLocationBtn').style.display="none";
+  document.getElementById('latId').style.display="none";
+  document.getElementById('lngId').style.display="none";
+  document.getElementById('getGPSAdminBtn').style.display="";
+ }else{
+  document.getElementById('getLocationBtn').style.display="";
+  document.getElementById('getGPSAdminBtn').style.display="none";
+   document.getElementById('emplLi').style.display="none";
+  document.getElementById('dateLi').style.display="none";
+ }
+});
+j("#employeeDetail").change(function() {	
+	getEmployeeDetails();
+});
+onloadMap();
+</script>

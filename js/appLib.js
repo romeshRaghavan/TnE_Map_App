@@ -158,6 +158,7 @@ if (window.openDatabase) {
         t.executeSql("CREATE TABLE IF NOT EXISTS currencyConversionMst (currencyCovId INTEGER PRIMARY KEY ASC, currencyId INTEGER REFERENCES currencyMst(currencyId), defaultcurrencyId INTEGER ,conversionRate Double)");
         t.executeSql("CREATE TABLE IF NOT EXISTS smsMaster (smsId INTEGER PRIMARY KEY ASC, smsText TEXT,senderAddr TEXT,smsSentDate TEXT,smsAmount TEXT)");
 		t.executeSql("CREATE TABLE IF NOT EXISTS smsScrutinizerMst (ID INTEGER PRIMARY KEY ASC, filterText TEXT, filterFlag TEXT, status TEXT)");
+		t.executeSql("CREATE TABLE IF NOT EXISTS employeeDetails (id INTEGER PRIMARY KEY ASC, name TEXT)");
     });
 } else {
     alert(window.lang.translate('WebSQL is not supported by your browser!'));
@@ -1188,7 +1189,7 @@ function dropAllTableDetails(){
 		t.executeSql("DELETE TABLE travelExpenseNameMst");
 		t.executeSql("DELETE TABLE travelSettleExpDetails");
 		t.executeSql("DELETE TABLE travelRequestDetails");
-        
+        t.executeSql("DELETE TABLE employeeDetails");
 	 });
 
 }
@@ -2452,3 +2453,95 @@ function synchronizeWhiteListMasterData() {
 			});
    appPageHistory.push(pageRef);
 	}
+
+                 /* GPS APP Code -- Start */
+function synchronizeEmployeeMasterData() {
+	var jsonSentToSync=new Object();
+	j('#loading_Cat').show();
+	if (mydb) {
+		j.ajax({
+			url: window.localStorage.getItem("urlPath")+"EmployeeWebService",
+			type: 'POST',
+			dataType: 'json',
+			crossDomain: true,
+			data: JSON.stringify(jsonSentToSync),
+			success: function(data) {
+				if(data.Status=='Success'){
+					mydb.transaction(function (t) {
+					t.executeSql("DELETE FROM employeeDetails");
+					var employeeArray = data.EmployeeArray;
+						if(employeeArray != null && employeeArray.length > 0){
+							for(var i=0; i<employeeArray.length; i++ ){
+								var empArr = new Array();
+								empArr = employeeArray[i];
+								var empl_id = empArr.id;
+								var empl_name = empArr.name;
+								 
+								t.executeSql("INSERT INTO employeeDetails (id, name) VALUES (?, ?)", [empl_id,empl_name]);
+								
+							}
+						}
+					});	
+					                      
+					j('#loading_Cat').hide(); 
+            		document.getElementById("syncSuccessMsg").innerHTML = "SMS Status Master synchronized successfully.";
+              		j('#syncSuccessMsg').hide().fadeIn('slow').delay(500).fadeOut('slow');
+				}
+	}
+	});
+  }
+}
+
+function onloadMap() {
+	
+	if (mydb) {
+		mydb.transaction(function (t) {
+			t.executeSql("SELECT * FROM employeeDetails", [], getEmployeeDetailsList);
+		});
+	} else {
+		alert(window.lang.translate('Database not found, your browser does not support web sql!'));
+	}
+}
+
+function getEmployeeDetailsList(transaction, results) {
+	var i;
+	var jsonAccHeadArr = [];
+	for (i = 0; i < results.rows.length; i++) {
+		var row = results.rows.item(i);
+		var jsonFindAccHead = new Object();
+		jsonFindAccHead["Label"] = row.id;
+		jsonFindAccHead["Value"] = row.name;
+		jsonAccHeadArr.push(jsonFindAccHead);
+	}
+	var jsonArr = [];
+	if(jsonAccHeadArr != null && jsonAccHeadArr.length > 0){
+		for(var i=0; i<jsonAccHeadArr.length; i++ ){
+			var stateArr = new Array();
+			stateArr = jsonAccHeadArr[i];
+			jsonArr.push({id: stateArr.Label,name: stateArr.Value});
+		}
+	}
+	jsonArr.sort(function(a, b){ // sort object by Account Head Name
+		var nameA=a.name.toLowerCase(), nameB=b.name.toLowerCase()
+		if (nameA < nameB) //sort string ascending
+			return -1 
+			if (nameA > nameB)
+				return 1
+				return 0 //default return value (no sorting)
+	})
+	console.log(jsonArr)
+	j("#employeeDetail").select2({
+		data:{ results: jsonArr, text: 'name' },
+		minimumResultsForSearch: -1,
+		placeholder: 'Select Employee ',
+		initSelection: function (element, callback) {
+			callback(jsonArr[4]);
+		},
+		formatResult: function(result) {
+			if ( ! isJsonString(result.id))
+				result.id = JSON.stringify(result.id);
+			return result.name;
+		}
+	}).select2("val","");
+
+}	

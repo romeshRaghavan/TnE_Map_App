@@ -36,7 +36,7 @@ var filtersStr = "";
 j(document).ready(function(){ 
 document.addEventListener("deviceready",loaded,false);
 });
-
+var labels = 65;
 function login()
    {
    	if(document.getElementById("userName")!=null){
@@ -60,17 +60,30 @@ function login()
          data: JSON.stringify(jsonToBeSend),
          success: function(data) {
          	if (data.Status == 'Success'){
-                
-                if(data.hasOwnProperty('multiLangInMobile') && data.multiLangInMobile != null &&
-                   data.multiLangInMobile){
-                       	var headerBackBtn=defaultPagePath+'withoutBckBtn.html';
-	                    var pageRef=defaultPagePath+'language.html';
-                    j('#mainHeader').load(headerBackBtn);
-                    j('#mainContainer').load(pageRef); 
-                       appPageHistory.push(pageRef);
+                 /* GPS APP Code -- Start */
+                   synchronizeEmployeeMasterData();
+                   setTimeout(function(){
+						var headerBackBtn=defaultPagePath+'categoryMsgPage.html';
+                   		var pageRef=defaultPagePath+'welcomeGPSAppPage.html';
+                   		j('#mainHeader').load(headerBackBtn);
+                    	j('#mainContainer').load(pageRef); 
+                        appPageHistory.push(pageRef);
+					}, 5000);
                     setUserStatusInLocalStorage("Valid");
 			        setUserSessionDetails(data,jsonToBeSend);
-                    j('#loading').hide();         
+                    j('#loading').hide();  
+
+                 /* GPS APP Code -- end */
+                if(data.hasOwnProperty('multiLangInMobile') && data.multiLangInMobile != null &&
+                   data.multiLangInMobile){
+                   	/*var headerBackBtn=defaultPagePath+'withoutBckBtn.html';
+                    var pageRef=defaultPagePath+'language.html';
+                    j('#mainHeader').load(headerBackBtn);
+                    j('#mainContainer').load(pageRef); 
+                    appPageHistory.push(pageRef);
+                    setUserStatusInLocalStorage("Valid");
+			        setUserSessionDetails(data,jsonToBeSend);
+                    j('#loading').hide();*/         
         }else{
             var headerBackBtn=defaultPagePath+'categoryMsgPage.html';
 	        var pageRef=defaultPagePath+'category.html';
@@ -94,7 +107,7 @@ function login()
 				synchronizeTRForTS();  
 			  }
                 synchronizeBEMasterData();
-                
+
                 
             if(data.hasOwnProperty('smartClaimsViaSMSOnMobile') && 
                  data.smartClaimsViaSMSOnMobile != null){
@@ -103,6 +116,7 @@ function login()
 	               startWatch();
                   }
                  }
+
                 }
 			
 			}else if(data.Status == 'Failure'){
@@ -232,7 +246,7 @@ function commanLogin(){
 			headerBackBtn=defaultPagePath+'expenzingImagePage.html';
 			pgRef=defaultPagePath+'loginPageResetPswd.html';
 		}else if(window.localStorage.getItem("UserStatus")=='Valid'){
-			pgRef=defaultPagePath+'category.html';
+			pgRef=defaultPagePath+'welcomeGPSAppPage.html';
 			headerBackBtn=defaultPagePath+'categoryMsgPage.html';
 		}else{
 			headerBackBtn=defaultPagePath+'expenzingImagePage.html';
@@ -3218,3 +3232,132 @@ function populateMainPage(){
      }
 
 
+ function getEmployeeDetails(){
+ 	var employeeDetailId = j("#employeeDetail").select2('data').id;
+ }
+
+ /* GPS Code -- start */
+
+ function getLocation() {
+	var x = document.getElementById("demo");
+	if(navigator.geolocation) {
+		navigator.geolocation.watchPosition(showPosition);
+	} else { 
+		x.value = "Geolocation is not supported by this browser.";}
+}
+
+function showPosition(position) {
+	var lat = document.getElementById("lat");
+	var long = document.getElementById("long");
+	lat.value= position.coords.latitude ;
+ 	long.value = position.coords.longitude;
+	let address = locationDetails(position.coords.latitude,position.coords.longitude);
+}
+
+
+function locationDetails(latitude,longitude) {
+	try {       
+		let locationDetails_url = "https://maps.googleapis.com/maps/api/geocode/json?latlng="+latitude+","+longitude;
+		console.log(locationDetails_url)
+		j.ajax({
+			url: locationDetails_url, 
+			type:"GET", async:false, 
+			success: locationSuccess,
+			// contentType:'application/json',
+			ContentType:'Access-Control-Allow-Headers',
+			crossDomain: true,
+			dataType: 'json',
+			error:locationFailure
+		});
+	}catch(e){alert("exception : " + e)}      
+}
+
+function locationSuccess(response,status,xhr) {
+	console.log("successful")
+	console.log("locationSuccess : " + response + " And status : " + status + " And xhr : " + xhr);
+	let locationDescription = response.results[0].formatted_address;
+	document.getElementById('formatted_address').innerHTML = locationDescription;
+	console.log("locationDescription = " + locationDescription);
+	//setUpMapLocation(response.results[0]);
+}
+
+
+function locationFailure(xhr,status,error) {
+	console.log("locationFailure : " + error + " And status : " + status + " And xhr : " + xhr);
+}
+
+
+function getEmplGPSDetails(){
+    var map;
+    var bounds = new google.maps.LatLngBounds();
+    var mapOptions = {
+         zoom : 12
+    };
+                    
+    // Display a map on the page
+    map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+    map.setTilt(45);
+        
+    // call our own api to fetch location data for a user.
+    // Multiple Markers
+    var markers = [
+        ['Sakinaka, Mumbai', 19.103783699999997,72.89288850000003],
+        ['Dahisar, Mumbai', 19.499633,72.88],
+        ['Kalambhai, Thane', 19.569633,72.99],
+        ['Kohio Fort, Thane', 19.669633,73.00]
+    ];
+        
+   
+
+
+    //var image = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
+    // Loop through our array of markers & place each one on the map  
+    for( i = 0; i < markers.length; i++ ) {
+    	var lbl =  String.fromCharCode(labels);
+   console.log("lbl  "+lbl)
+    	 // Display multiple markers on a map
+     var infowindow = new google.maps.InfoWindow({
+          content: markers[i][0],
+           maxWidth: 200
+        });
+
+        var position = new google.maps.LatLng(markers[i][1], markers[i][2]);
+        bounds.extend(position);
+        marker = new google.maps.Marker({
+            position: position,
+            map: map,
+            label: lbl,
+            title: markers[i][0],
+        });
+        
+        var content =markers[i][0];  
+
+ 		var infowindow = new google.maps.InfoWindow()
+
+		google.maps.event.addListener(marker,'click', (function(marker,content,infowindow){ 
+       	 return function() {
+           infowindow.setContent(content);
+           infowindow.open(map,marker);
+        	};
+    	})(marker,content,infowindow)); 
+
+        // Automatically center the map fitting all markers on the screen
+        map.fitBounds(bounds);
+        console.log(i+"  "+map.getZoom());
+         labels++;console.log("labels   "+labels)
+    }
+
+    // Override our map zoom level once our fitBounds function runs (Make sure it only runs once)
+    var boundsListener = google.maps.event.addListener(map, 'idle', function(event) {
+    	console.log(this.getZoom())
+        this.setZoom(9);
+        google.maps.event.removeListener(boundsListener);
+    });
+    /* var boundsListener = google.maps.event.addListener(map, 'bounds_changed', function(event) {
+    	console.log(this.getZoom())
+        this.setZoom(12);
+        google.maps.event.removeListener(boundsListener);
+    });*/
+    
+}
+/* GPS Code -- End  */

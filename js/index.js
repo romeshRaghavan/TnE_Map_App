@@ -3301,16 +3301,18 @@ function getEmplGPSDetails(){
     // call our own api to fetch location data for a user.
     // Multiple Markers
     var markers = [
-        ['Sakinaka, Mumbai', 19.103783699999997,72.89288850000003],
-        ['Dahisar, Mumbai', 19.499633,72.88],
-        ['Kalambhai, Thane', 19.569633,72.99],
-        ['Kohio Fort, Thane', 19.669633,73.00]
+        ['Gundecha Onclave, Mumbai', 19.106516,72.888883],
+        ['Sakinaka, Mumbai', 19.094896,72.886525],
+        ['Asalpha, Mumbai', 19.100227,72.895136],
+        ['Jagruti Nagar, Mumbai', 19.092633,72.901841],
+        ['Ghatkopar, Mumbai', 19.079024,72.908012]
     ];
      var flightPlanCoordinates = [
-          {lat: 19.103783699999997, lng: 72.89288850000003},
-          {lat:  19.499633, lng:72.88},
-          {lat: 19.569633, lng:72.99},
-          {lat: 19.669633, lng: 73.00}
+          {lat: 19.106516, lng: 72.888883},
+          {lat:  19.094896, lng:72.886525},
+          {lat: 19.100227, lng:72.895136},
+          {lat: 19.092633, lng: 72.901841},
+          {lat: 19.079024, lng: 72.908012}
         ];
     
    
@@ -3366,7 +3368,7 @@ function getEmplGPSDetails(){
     // Override our map zoom level once our fitBounds function runs (Make sure it only runs once)
     var boundsListener = google.maps.event.addListener(map, 'idle', function(event) {
     	console.log(this.getZoom())
-        this.setZoom(9);
+        this.setZoom(13);
         google.maps.event.removeListener(boundsListener);
     });
     /* var boundsListener = google.maps.event.addListener(map, 'bounds_changed', function(event) {

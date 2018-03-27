@@ -2513,6 +2513,7 @@ function getEmployeeDetailsList(transaction, results) {
 		jsonFindAccHead["Value"] = row.name;
 		jsonAccHeadArr.push(jsonFindAccHead);
 	}
+
 	var jsonArr = [];
 	if(jsonAccHeadArr != null && jsonAccHeadArr.length > 0){
 		for(var i=0; i<jsonAccHeadArr.length; i++ ){
@@ -2521,6 +2522,9 @@ function getEmployeeDetailsList(transaction, results) {
 			jsonArr.push({id: stateArr.Label,name: stateArr.Value});
 		}
 	}
+	//commment below line for live data from database for employee select 2 picker. Below code meant for Demo purpose only.
+	jsonArr = [{name:"Gaurav Barjatya", id:"1"},{name:"Abhinav Gupta", id:"2"},{name:"Power user", id:"3"},{name:"Rushank Vora", id:"4"}];
+	
 	jsonArr.sort(function(a, b){ // sort object by Account Head Name
 		var nameA=a.name.toLowerCase(), nameB=b.name.toLowerCase()
 		if (nameA < nameB) //sort string ascending
@@ -2529,7 +2533,7 @@ function getEmployeeDetailsList(transaction, results) {
 				return 1
 				return 0 //default return value (no sorting)
 	})
-	console.log(jsonArr)
+	
 	j("#employeeDetail").select2({
 		data:{ results: jsonArr, text: 'name' },
 		minimumResultsForSearch: -1,
@@ -2545,3 +2549,4 @@ function getEmployeeDetailsList(transaction, results) {
 	}).select2("val","");
 
 }	
+/*		GPS Code Ends 			 */

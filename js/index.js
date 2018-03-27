@@ -3,8 +3,8 @@ var defaultPagePath='app/pages/';
 var headerMsg = "Expenzing";
 //var urlPath = 'http://1.255.255.36:13130/TnEV1_0AWeb/WebService/Login/'
 //var WebServicePath ='http://1.255.255.214:8085/NexstepWebService/mobileLinkResolver.service';
-//var WebServicePath = 'http://live.nexstepapps.com:8284/NexstepWebService/mobileLinkResolver.service';
-var WebServicePath ='http://1.255.255.36:9898/NexstepWebService/mobileLinkResolver.service';
+var WebServicePath = 'http://live.nexstepapps.com:8284/NexstepWebService/mobileLinkResolver.service';
+// var WebServicePath ='http://1.255.255.36:9898/NexstepWebService/mobileLinkResolver.service';
 var clickedFlagCar = false;
 var clickedFlagTicket = false;
 var clickedFlagHotel = false;
@@ -3329,7 +3329,7 @@ function getEmplGPSDetails(){
     // Loop through our array of markers & place each one on the map  
     for( i = 0; i < markers.length; i++ ) {
     	var lbl =  String.fromCharCode(labels);
-  		 console.log("lbl  "+lbl)
+  		 
     	 // Display multiple markers on a map
      var infowindow = new google.maps.InfoWindow({
           content: markers[i][0],
@@ -3342,6 +3342,7 @@ function getEmplGPSDetails(){
             position: position,
             map: map,
             label: lbl,
+             animation: google.maps.Animation.DROP,
             title: markers[i][0],
         });
         
@@ -3358,8 +3359,8 @@ function getEmplGPSDetails(){
 
         // Automatically center the map fitting all markers on the screen
         map.fitBounds(bounds);
-        console.log(i+"  "+map.getZoom());
-         labels++;console.log("labels   "+labels)
+        
+         labels++;
     }
 
     // Override our map zoom level once our fitBounds function runs (Make sure it only runs once)

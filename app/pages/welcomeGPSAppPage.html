@@ -28,7 +28,7 @@
                 </li>
                 <br>
                 <li id="lngId">
-                	<!--  <label >Longitude:</label>  --><p id="long"/>
+                	<p id="long"/>
                 </li>
                 <br>
                 <p id="formatted_address"> </p>
@@ -54,8 +54,8 @@ $(function() {
 	});
 
  var UserName =  window.localStorage.getItem("UserName");
- console.log(UserName)
- if(UserName == 'support@gps.in'){
+ 
+ if(UserName == 'sd.nexstep1@yahoo.co.in'){
   document.getElementById('getLocationBtn').style.display="none";
   document.getElementById('latId').style.display="none";
   document.getElementById('lngId').style.display="none";
